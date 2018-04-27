@@ -5,13 +5,17 @@ library(fortunes)
 epmc <- readr::read_csv("data_epmc.csv")
 
 ui <- fixedPage(
-  h1("Stats Quotes"),
-  p("This is a simple demo of the R package shinyswipr. Swipe on the quote card below to store your rating. What each direction (up, down, left, right) mean is up to you. (We won't tell.)"),
+   h1("Disease Dashboard"),
+  p("This is a simple demo of the Disease Dashboard provided by SpringerNature Medizin.
+     Search for a particular disease (e.g., hypertension), and then click, drag, and
+     release the Searh Results box to either select a given paper as relevant (drag right) 
+     or to discard a paper as irrelevant (drag left). Please drag the box slowly to make 
+     sure the app can correctly identify the direction (right or left)."),
   hr(),
-  shinyswiprUI("quote_swiper",
-                h4("Swipe Me!"),
+  shinyswiprUI( "quote_swiper",
+                h4("Search Results"),
                 hr(),
-                h4("Quote:"),
+                h4("Title:"),
                 textOutput("quote"),
                 h4("Author(s):"),
                 textOutput("quote_author")
