@@ -1,12 +1,14 @@
+library(tidyverse)
 library(shinysense)
 library(shiny)
 library(fortunes)
+epmc <- readr::read_csv("data_epmc.csv")
 
 ui <- fixedPage(
   h1("Stats Quotes"),
   p("This is a simple demo of the R package shinyswipr. Swipe on the quote card below to store your rating. What each direction (up, down, left, right) mean is up to you. (We won't tell.)"),
   hr(),
-  shinyswiprUI( "quote_swiper",
+  shinyswiprUI("quote_swiper",
                 h4("Swipe Me!"),
                 hr(),
                 h4("Quote:"),
@@ -23,20 +25,20 @@ server <- function(input, output, session) {
   card_swipe <- callModule(shinyswipr, "quote_swiper")
   
   appVals <- reactiveValues(
-    quote = fortune(),
+    quote = sample_n(epmc, 1),
     swipes = data.frame(quote = character(), author = character(), swipe = character())
   )
   
   our_quote <- isolate(appVals$quote)
-  output$quote <- renderText({ our_quote$quote })
-  output$quote_author <- renderText({ paste0("-",our_quote$author) })
+  output$quote <- renderText({ our_quote$title })
+  output$quote_author <- renderText({ our_quote$authorString })
   output$resultsTable <- renderDataTable({appVals$swipes})
   
-  observeEvent( card_swipe(),{
+  observeEvent(card_swipe(),{
     #Record our last swipe results.
     appVals$swipes <- rbind(
-      data.frame(quote = appVals$quote$quote,
-                 author = appVals$quote$author,
+      data.frame(quote = appVals$quote$title,
+                 author = appVals$quote$authorString,
                  swipe = card_swipe()
       ), appVals$swipes
     )
@@ -44,12 +46,12 @@ server <- function(input, output, session) {
     output$resultsTable <- renderTable({appVals$swipes})
     
     #update the quote
-    appVals$quote <- fortune()
+    appVals$quote <- sample_n(epmc, 1)
     
     #send update to the ui.
-    output$quote <- renderText({ appVals$quote$quote })
+    output$quote <- renderText({ appVals$quote$title })
     
-    output$quote_author <- renderText({ paste0("-",appVals$quote$author) })
+    output$quote_author <- renderText({ appVals$authorString })
   }) #close event observe.
 }
 
