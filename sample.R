@@ -53,7 +53,7 @@ server <- function(input, output, session) {
     output$resultsTable <- renderTable({appVals$swipes})
     
     #update the quote
-    appVals$quote <- sample_n(epmc, 1)
+    appVals$df <- sample_n(epmc, 1)
     
     #send update to the ui.
     output$quote <- renderText({ appVals$df$title })
